@@ -29,7 +29,14 @@ def create_subacc_subaddress(session: Session):
 
 def get_subaddresses(session: Session, filename: str):
     addresses = []
-    r = session.get(f'https://www.okx.com/v2/asset/deposit/address/list?t={int(time() * 1000)}&currencyId=2&subCurrencyId={CHAIN_ID}&all=true')
+    params = {
+        't': int(time() * 1000),
+        'currencyId': 2,
+        'subCurrencyId': CHAIN_ID,
+        'all': True,
+    }
+    if CHAIN_ID == 2192: params['currencyId'] = CHAIN_ID
+    r = session.get(f'https://www.okx.com/v2/asset/deposit/address/list', params=params)
 
     if r.json().get('code') == 0 and r.json().get('error_code') == '0':
         for subaddress_data in r.json()['data']:
