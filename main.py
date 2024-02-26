@@ -12,6 +12,8 @@ def create_subacc_subaddress(session: Session):
         "subCurrencyId": CHAIN_ID,
         "isIsolationAddress": False
     }
+    if CHAIN_ID == 2192: payload['currencyId'] = CHAIN_ID
+
     for i in range(20):
         url = f'https://www.okx.com/v2/asset/deposit/address?t={int(time() * 1000)}'
         r = session.post(url, json=payload)
@@ -64,13 +66,16 @@ if __name__ == '__main__':
     if not os.path.isdir('results'): os.mkdir('results')
 
     while True:
-        logger.info(f'What chain you want?\n1. Starknet\n2. EVM')
+        logger.info(f'What chain you want?\n1. Starknet\n2. EVM\n3. Aptos')
         chain_ = input()
         if chain_ == '1':
             CHAIN_ID = 2131
             break
         elif chain_ == '2':
             CHAIN_ID = 1917
+            break
+        elif chain_ == '3':
+            CHAIN_ID = 2192
             break
         else:
             logger.warning(f'No option :{chain_}"')

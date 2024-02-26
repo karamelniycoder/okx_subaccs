@@ -1,3 +1,2 @@
-pyuseragents~=1.0.5
 requests~=2.31.0
 loguru~=0.6.0
