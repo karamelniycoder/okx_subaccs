@@ -14,17 +14,23 @@ def create_subacc_subaddress(session: Session):
     }
     if CHAIN_ID in [2192, 880]: payload['currencyId'] = CHAIN_ID
 
-    for i in range(20):
+    i = 0
+    while i <= 20:
         url = f'https://www.okx.com/v2/asset/deposit/address?t={int(time() * 1000)}'
         r = session.post(url, json=payload)
         if r.json().get('code') == 0 and r.json().get('error_code') == '0':
             logger.info(f'Created {i+1} subaddress')
+            i += 1
         else:
             if r.json().get('error_message') in ['The number of deposit addresses has reached the maximum limit', 'Maximum number of deposit addresses reached']:
                 logger.warning(f'Sub Addresses limit')
                 break
             else:
                 logger.error(f'Create {i+1} subaddress ERROR: {r.json()}')
+                if r.json().get("msg") == "Too many requests":
+                    sleep(2)
+                else:
+                    i += 1
 
 
 def get_subaddresses(session: Session, filename: str):
