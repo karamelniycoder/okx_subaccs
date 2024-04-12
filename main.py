@@ -12,7 +12,7 @@ def create_subacc_subaddress(session: Session):
         "subCurrencyId": CHAIN_ID,
         "isIsolationAddress": False
     }
-    if CHAIN_ID == 2192: payload['currencyId'] = CHAIN_ID
+    if CHAIN_ID in [2192, 880]: payload['currencyId'] = CHAIN_ID
 
     for i in range(20):
         url = f'https://www.okx.com/v2/asset/deposit/address?t={int(time() * 1000)}'
@@ -35,7 +35,7 @@ def get_subaddresses(session: Session, filename: str):
         'subCurrencyId': CHAIN_ID,
         'all': True,
     }
-    if CHAIN_ID == 2192: params['currencyId'] = CHAIN_ID
+    if CHAIN_ID in [2192, 880]: params['currencyId'] = CHAIN_ID
     r = session.get(f'https://www.okx.com/v2/asset/deposit/address/list', params=params)
 
     if r.json().get('code') == 0 and r.json().get('error_code') == '0':
@@ -69,11 +69,11 @@ def manager(tokens: list):
 
 if __name__ == '__main__':
     logger.remove()
-    logger.add(stderr, format="<white>{time:HH:mm:ss:SSS}</white> | <level>{level: <8}</level> | <level>{message}</level>")
+    logger.add(stderr, format="<white>{time:HH:mm:ss}</white> | <level>{message}</level>")
     if not os.path.isdir('results'): os.mkdir('results')
 
     while True:
-        logger.info(f'What chain you want?\n1. Starknet\n2. EVM\n3. Aptos')
+        logger.info(f'What chain you want?\n1. Starknet\n2. EVM\n3. Aptos\n4. Solana')
         chain_ = input()
         if chain_ == '1':
             CHAIN_ID = 2131
@@ -84,9 +84,11 @@ if __name__ == '__main__':
         elif chain_ == '3':
             CHAIN_ID = 2192
             break
+        elif chain_ == '4':
+            CHAIN_ID = 880
+            break
         else:
             logger.warning(f'No option :{chain_}"')
-
 
     with open('tokens.txt') as f:
         tokens = f.read().splitlines()
